@@ -1,6 +1,6 @@
 import * as mock from "@/mocks/data";
 
-export const API_URL = (import.meta.env.VITE_API_URL ?? "http://127.0.0.1:5000").replace(/\/$/, "");
+export const API_URL = (import.meta.env['VITE_API_URL'] ?? "http://127.0.0.1:5000").replace(/\/$/, "");
 let mockUsed = false;
 const listeners = new Set<() => void>();
 export const subscribeMock = (listener: () => void) => { listeners.add(listener); return () => { listeners.delete(listener); }; };
