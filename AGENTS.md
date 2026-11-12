@@ -34,3 +34,4 @@ use the editor.
 - Keep external API fetching in `src/lib/api.ts` and typed fallback fixtures in `src/mocks/data.ts` so views share consistent data and fallback status.
 - Race API reads (including response parsing) against an AbortController deadline and run browser queries even offline so fallback never waits for network reconnection.
 - Keep recording inspection as a nested Search view with frame-selected transcript segments so the four-tab single-page workspace stays intact.
+- Keep frame scrolling inside the Recording view and share chronological selection between buttons and keyboard navigation so transcript updates stay synchronized without scrolling the page.
