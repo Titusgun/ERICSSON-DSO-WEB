@@ -4,7 +4,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { RecordingView } from "./recording-view";
 import { recording } from "@/mocks/data";
 
-vi.mock("@/lib/api", () => ({ API_URL: "http://localhost:5000", getRecording: async () => recording }));
+vi.mock("@/lib/api", () => ({ API_URL: "http://localhost:5000", getRecording: async () => recording, NotFoundError: class NotFoundError extends Error {} }));
 afterEach(cleanup);
 function open(initialTime = 0) {
   return render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><RecordingView sha12="sample" initialTime={initialTime} onBack={() => {}} /></QueryClientProvider>);

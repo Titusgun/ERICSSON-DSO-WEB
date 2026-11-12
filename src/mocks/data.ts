@@ -2,7 +2,7 @@ export type Stats = { files: number; frames: number; segments: number; slides: n
 export type Savings = { scenario: string; bytes_before: number; bytes_after: number };
 export type StorageFile = { name: string; kind: string; size_bytes: number; source: string; sha256: string; owner?: string };
 export type Recording = { source: { file_name: string }; duration_sec: number; frames: { id: string; t_sec: number; image: string; slide_id: string }[]; segments: { id: string; start_sec: number; end_sec: number; speaker: string; text: string; frame_id: string }[] };
-export type SearchResult = { kind: string; file: string; t_sec: number | null; frame_image: string | null; slide_id: string; snippet: string };
+export type SearchResult = { kind: string; file: string; t_sec: number | null; frame_image: string | null; slide_id: string | null; sha12?: string | null; snippet: string };
 export type Duplicate = { kind: string; a: string; b: string; note?: string };
 
 export const stats: Stats = { files: 7, frames: 3, segments: 12, slides: 16, duplicates: 5 };
@@ -12,16 +12,16 @@ export const savings: Savings[] = [
   { scenario: "offboarding", bytes_before: 8400000, bytes_after: 2100000 },
 ];
 export const files: StorageFile[] = [
-  { name: "talk.mp4", kind: "video", size_bytes: 1043234567, source: "play", sha256: "3fa9c0d1e2b4…" },
-  { name: "deck_a.pdf", kind: "document", size_bytes: 41000, source: "sharepoint", sha256: "9b1c…" },
-  { name: "deck_a (1).pdf", kind: "document", size_bytes: 41000, source: "sharepoint", sha256: "9b1c…" },
-  { name: "deck_b.pdf", kind: "document", size_bytes: 52000, source: "sharepoint", sha256: "a31e…" },
-  { name: "deck_a_rev2.pdf", kind: "document", size_bytes: 45000, source: "sharepoint", sha256: "7c2d…" },
-  { name: "deck_b - Copy.pdf", kind: "document", size_bytes: 52000, source: "offboarding", owner: "jane", sha256: "a31e…" },
-  { name: "my_notes.pdf", kind: "document", size_bytes: 18000, source: "offboarding", owner: "jane", sha256: "e43f…" },
+  { name: "talk.mp4", kind: "video", size_bytes: 1043234567, source: "play", sha256: "3fa9c0d1e2b4a6f8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8f0a2b4c6d8e0f2a4b6c8" },
+  { name: "deck_a.pdf", kind: "document", size_bytes: 41000, source: "sharepoint", sha256: "9b1c22aa01ff3e5d7a9c1e3f5a7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b" },
+  { name: "deck_a (1).pdf", kind: "document", size_bytes: 41000, source: "sharepoint", sha256: "9b1c22aa01ff3e5d7a9c1e3f5a7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b" },
+  { name: "deck_b.pdf", kind: "document", size_bytes: 52000, source: "sharepoint", sha256: "a31e5b7c9d2f4a6b8c1e3f5a7b9d2f4a6c8e1b3d5f7a9c2e4b6d8f1a3c5e7b9d" },
+  { name: "deck_a_rev2.pdf", kind: "document", size_bytes: 45000, source: "sharepoint", sha256: "7c2d4e6f8a1b3c5d7e9f2a4b6c8d1e3f5a7b9c2d4e6f8a1b3c5d7e9f2a4b6c8d" },
+  { name: "deck_b - Copy.pdf", kind: "document", size_bytes: 52000, source: "offboarding", owner: "jane", sha256: "a31e5b7c9d2f4a6b8c1e3f5a7b9d2f4a6c8e1b3d5f7a9c2e4b6d8f1a3c5e7b9d" },
+  { name: "my_notes.pdf", kind: "document", size_bytes: 18000, source: "offboarding", owner: "jane", sha256: "e43f6a8b1c3d5e7f9a2b4c6d8e1f3a5b7c9d2e4f6a8b1c3d5e7f9a2b4c6d8e1f" },
 ];
 export const searchResults: SearchResult[] = [
-  { kind: "segment", file: "talk.mp4", t_sec: 96.0, frame_image: "frames/3fa9c0d1e2b4/f0012.webp", slide_id: "3fa9c0d1e2b4:2:9f2c01ab", snippet: "As you see here, the [latency] drops from 12 ms to 4 ms" },
+  { kind: "segment", file: "talk.mp4", t_sec: 96.0, frame_image: "frames/3fa9c0d1e2b4/f0012.webp", slide_id: "3fa9c0d1e2b4:2:9f2c01ab", sha12: "3fa9c0d1e2b4", snippet: "As you see here, the [latency] drops from 12 ms to 4 ms" },
   { kind: "slide", file: "deck_a.pdf", t_sec: null, frame_image: null, slide_id: "9b1c22aa01ff:2:9f2c01ab", snippet: "Median [latency] dropped from 12 ms to 4 ms" },
 ];
 export const duplicates: Duplicate[] = [

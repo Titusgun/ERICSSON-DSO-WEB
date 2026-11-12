@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowUp, ArrowDown, Clock3, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { API_URL, getRecording } from "@/lib/api";
+import { API_URL, getRecording, NotFoundError } from "@/lib/api";
 import { formatTimestamp } from "@/lib/format";
 import { frameAtTime, frameSegments } from "@/lib/workspace";
 
@@ -51,7 +51,7 @@ export function RecordingView({ sha12, initialTime, onBack }: { sha12: string; i
   }, [selected?.id]);
   return <section className="mt-7">
     <Button variant="ghost" onClick={onBack} className="mb-5"><ArrowLeft />Back to search</Button>
-    {!data ? <div className="empty-state" role="status">Loading recording…</div> : <>
+    {recording.error instanceof NotFoundError ? <div className="empty-state" role="status"><ImageOff className="mx-auto mb-4" /><h3 className="text-lg font-medium text-foreground">Recording not found</h3><p className="mt-2">The API has no recording for this video.</p></div> : !data ? <div className="empty-state" role="status">Loading recording…</div> : <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3"><h2 className="section-heading">{data.source.file_name}</h2><span className="flex items-center gap-2 font-mono text-sm text-muted-foreground"><Clock3 size={16} />{formatTimestamp(data.duration_sec)}</span></div>
       <div className="recording-layout"><section aria-label="Key frames" className="recording-frames-column"><div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h3 className="section-heading">Key frames</h3><div className="flex items-center gap-2"><span className="font-mono text-sm text-muted-foreground">{selectedIndex >= 0 ? selectedIndex + 1 : 0}/{frames.length}</span><Button variant="outline" size="icon" aria-label="Previous frame" title="Previous frame" disabled={selectedIndex <= 0} onClick={() => moveFrame(-1)}><ArrowUp /></Button><Button variant="outline" size="icon" aria-label="Next frame" title="Next frame" disabled={selectedIndex < 0 || selectedIndex >= frames.length - 1} onClick={() => moveFrame(1)}><ArrowDown /></Button></div></div><div className="recording-frame-list" ref={listRef}>{frames.map(frame => <Button key={frame.id} variant="outline" className="recording-frame" aria-pressed={selected?.id === frame.id} aria-label={`Frame ${formatTimestamp(frame.t_sec)}`} onClick={() => setSelectedId(frame.id)}>
         <RecordingImage image={frame.image} alt={`Key frame at ${formatTimestamp(frame.t_sec)}`} />
