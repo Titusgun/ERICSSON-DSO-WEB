@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getStats, getSavings, getFiles, getDuplicates, getRecording, search } from "./api";
-import { videoSavings, frameSegments, frameAtTime } from "./workspace";
+import { getStats, getSavings, getFiles, getDuplicates, getRecording, search, NotFoundError } from "./api";
+import { videoSavings, frameSegments, frameAtTime, recordingSha } from "./workspace";
 import { formatTimestamp, percentSaved } from "./format";
 import * as mock from "@/mocks/data";
 
@@ -95,6 +95,16 @@ it("requests the recording by sha12", async () => {
   vi.stubGlobal("fetch", fetchMock);
   expect(await getRecording("3fa9c0d1e2b4")).toEqual(mock.recording);
   expect(fetchMock.mock.calls[0]?.[0]).toContain("/api/recording/3fa9c0d1e2b4");
+});
+it("throws NotFoundError instead of mock data when the recording API returns 404", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 404 }));
+  await expect(getRecording("3fa9c0d1e2b4")).rejects.toBeInstanceOf(NotFoundError);
+});
+it("derives the recording sha from sha12 first, then frame_image, never slide_id", () => {
+  expect(recordingSha(mock.searchResults[0]!)).toBe("3fa9c0d1e2b4");
+  expect(recordingSha({ ...mock.searchResults[0]!, sha12: null })).toBe("3fa9c0d1e2b4");
+  expect(recordingSha({ ...mock.searchResults[0]!, sha12: null, frame_image: "frames/aabbccddee11/f0001.webp", slide_id: "999999999999:2:xyz" })).toBe("aabbccddee11");
+  expect(recordingSha({ ...mock.searchResults[0]!, sha12: null, frame_image: null })).toBeUndefined();
 });
 it("calculates saved percent from before and after", () => expect(percentSaved(8400000, 2100000)).toBe(75));
 it("formats 96 seconds as 01:36", () => expect(formatTimestamp(96)).toBe("01:36"));
