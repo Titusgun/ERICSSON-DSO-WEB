@@ -6,7 +6,14 @@ const listeners = new Set<() => void>();
 export const subscribeMock = (listener: () => void) => { listeners.add(listener); return () => { listeners.delete(listener); }; };
 export const getMockStatus = () => mockUsed;
 
-async function request<T>(path: string, fallback: T): Promise<T> {
+export class NotFoundError extends Error {
+  constructor(path: string) {
+    super(`API returned 404 for ${path}`);
+    this.name = "NotFoundError";
+  }
+}
+
+async function request<T>(path: string, fallback: T, { allowNotFound = false } = {}): Promise<T> {
   const controller = new AbortController();
   let timeout: ReturnType<typeof setTimeout> | undefined;
   try {
@@ -18,11 +25,15 @@ async function request<T>(path: string, fallback: T): Promise<T> {
     });
     const responseData = (async () => {
       const response = await fetch(`${API_URL}/api/${path}`, { signal: controller.signal });
-      if (!response.ok) throw new Error(`API returned ${response.status}`);
+      if (!response.ok) {
+        if (allowNotFound && response.status === 404) throw new NotFoundError(path);
+        throw new Error(`API returned ${response.status}`);
+      }
       return await response.json() as T;
     })();
     return await Promise.race([responseData, deadline]);
-  } catch {
+  } catch (error) {
+    if (error instanceof NotFoundError) throw error;
     mockUsed = true;
     listeners.forEach((listener) => listener());
     return structuredClone(fallback);
@@ -35,5 +46,5 @@ export const getStats = () => request("stats", mock.stats);
 export const getSavings = () => request("savings", mock.savings);
 export const getFiles = () => request("files", mock.files);
 export const getDuplicates = () => request("duplicates", mock.duplicates);
-export const getRecording = (sha12: string) => request(`recording/${encodeURIComponent(sha12)}`, mock.recording);
+export const getRecording = (sha12: string) => request(`recording/${encodeURIComponent(sha12)}`, mock.recording, { allowNotFound: true });
 export const search = (query: string) => request(`search?q=${encodeURIComponent(query)}`, mock.searchResults.filter((result) => `${result.snippet} ${result.file} ${result.slide_id}`.toLowerCase().includes(query.trim().toLowerCase())));
