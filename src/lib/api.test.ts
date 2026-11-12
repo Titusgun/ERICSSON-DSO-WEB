@@ -81,6 +81,7 @@ it("provides seven files including jane's offboarding notes", () => {
   expect(mock.files.map(f => f.name)).toEqual(["talk.mp4", "deck_a.pdf", "deck_a (1).pdf", "deck_b.pdf", "deck_a_rev2.pdf", "deck_b - Copy.pdf", "my_notes.pdf"]);
   expect(mock.files.find(f => f.name === "deck_a_rev2.pdf")?.source).toBe("sharepoint");
   expect(mock.files.find(f => f.name === "my_notes.pdf")).toMatchObject({ source: "offboarding", owner: "jane" });
+  expect(mock.files.find(f => f.name === "deck_b - Copy.pdf")).toMatchObject({ source: "offboarding", owner: "jane" });
 });
 it("provides frames at 0, 8, 16 seconds with two to three segments each", () => {
   expect(mock.recording.frames.map(f => f.t_sec)).toEqual([0, 8, 16]);

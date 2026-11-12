@@ -17,7 +17,7 @@ export const files: StorageFile[] = [
   { name: "deck_a (1).pdf", kind: "document", size_bytes: 41000, source: "sharepoint", sha256: "9b1c…" },
   { name: "deck_b.pdf", kind: "document", size_bytes: 52000, source: "sharepoint", sha256: "a31e…" },
   { name: "deck_a_rev2.pdf", kind: "document", size_bytes: 45000, source: "sharepoint", sha256: "7c2d…" },
-  { name: "deck_b - Copy.pdf", kind: "document", size_bytes: 52000, source: "sharepoint", sha256: "a31e…" },
+  { name: "deck_b - Copy.pdf", kind: "document", size_bytes: 52000, source: "offboarding", owner: "jane", sha256: "a31e…" },
   { name: "my_notes.pdf", kind: "document", size_bytes: 18000, source: "offboarding", owner: "jane", sha256: "e43f…" },
 ];
 export const searchResults: SearchResult[] = [
