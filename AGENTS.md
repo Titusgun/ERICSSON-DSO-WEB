@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## App architecture
+- Keep the four workspace views as tabs on the index route because this is a single-page workspace.
+- Keep external API fetching in `src/lib/api.ts` and typed fallback fixtures in `src/mocks/data.ts` so views share consistent data and fallback status.
