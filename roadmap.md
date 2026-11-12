@@ -1,9 +1,9 @@
 # dso roadmap
-- [ ] Correct revision ownership and duplicate review labels.
-- [ ] Use only video distillation in the dashboard summary.
-- [ ] Expand inventory to seven files with source names and owners.
-- [ ] Raise small text to at least 14px.
-- [ ] Add and verify frame-selected Recording view with bounded API fallback.
+- [x] Correct revision ownership and duplicate review labels.
+- [x] Use only video distillation in the dashboard summary.
+- [x] Expand inventory to seven files with source names and owners.
+- [x] Raise small text to at least 14px.
+- [x] Add and verify frame-selected Recording view with bounded API fallback.
 - [x] Build four-tab interface and projector-friendly design system.
 - [x] Connect API reads with supplied mock fallback and badge.
 - [x] Verify search, duplicate grouping, sorting, and dashboard calculations.
