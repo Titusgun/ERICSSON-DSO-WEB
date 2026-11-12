@@ -1,5 +1,5 @@
 # dso roadmap
-- [ ] Make Recording frames compact and independently scrollable, keep transcript sticky, and verify buttons and arrow-key navigation.
+- [x] Make Recording frames compact and independently scrollable, keep transcript sticky, and verify buttons and arrow-key navigation.
 - [x] Correct revision ownership and duplicate review labels.
 - [x] Use only video distillation in the dashboard summary.
 - [x] Expand inventory to seven files with source names and owners.
