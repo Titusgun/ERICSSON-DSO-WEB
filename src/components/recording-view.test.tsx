@@ -15,7 +15,9 @@ it("moves between chronological frames with buttons and stops at the boundaries"
   expect(screen.getByRole("button", { name: "Previous frame" })).toBeDisabled();
   fireEvent.click(screen.getByRole("button", { name: "Next frame" }));
   expect(screen.getByRole("button", { name: "Frame 00:08" })).toHaveAttribute("aria-pressed", "true");
-  expect(screen.getByText(recording.segments[2].text)).toBeInTheDocument();
+  const segment = recording.segments.find(segment => segment.frame_id === "f8");
+  if (!segment) throw new Error("Missing frame 00:08 transcript fixture");
+  expect(screen.getByText(segment.text)).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Next frame" }));
   expect(screen.getByRole("button", { name: "Frame 00:16" })).toHaveAttribute("aria-pressed", "true");
   expect(screen.getByRole("button", { name: "Next frame" })).toBeDisabled();
