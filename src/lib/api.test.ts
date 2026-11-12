@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getStats, getSavings, getFiles, getDuplicates, search } from "./api";
+import { getStats, getSavings, getFiles, getDuplicates, getRecording, search } from "./api";
+import { videoSavings, frameSegments, frameAtTime } from "./workspace";
 import { formatTimestamp, percentSaved } from "./format";
 import * as mock from "@/mocks/data";
 
@@ -11,6 +12,7 @@ describe("external API fallback", () => {
     { name: "files", read: getFiles, expected: mock.files },
     { name: "duplicates", read: getDuplicates, expected: mock.duplicates },
     { name: "search", read: () => search("latency"), expected: mock.searchResults },
+    { name: "recording", read: () => getRecording("3fa9c0d1e2b4"), expected: mock.recording },
   ];
   it.each(reads)("returns $name fallback at 1.5 seconds, before the 2-second loading limit", async ({ read, expected }) => {
     vi.useFakeTimers();
@@ -50,11 +52,12 @@ describe("external API fallback", () => {
   it("preserves all supplied storage values", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
     expect((await getSavings()).map(s => [s.bytes_before, s.bytes_after])).toEqual([[1043234567, 2150000], [52000000, 31000000], [8400000, 2100000]]);
-    expect((await getFiles()).map(f => f.size_bytes)).toEqual([1043234567, 41000, 41000]);
+    expect((await getFiles()).slice(0, 3).map(f => f.size_bytes)).toEqual([1043234567, 41000, 41000]);
   });
   it("retains the canonical duplicate copy in b", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
-    expect((await getDuplicates()).map(d => d.b)).toEqual(["deck_a.pdf", "deck_a.pdf slide 1", "deck_a.pdf"]);
+    expect((await getDuplicates()).map(d => d.b)).toEqual(["deck_a.pdf", "deck_a.pdf slide 1", "deck_a_rev2.pdf"]);
+    expect((await getDuplicates()).find(d => d.kind === "revision")?.a).toBe("deck_a.pdf");
   });
   it("filters mock search and encodes the query for the API", async () => {
     const fetchMock = vi.fn().mockRejectedValue(new Error("offline"));
@@ -68,6 +71,29 @@ describe("external API fallback", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => ({ files: 99 }) }));
     expect(await getStats()).toEqual({ files: 99 });
   });
+});
+it("uses only video_distill for the summary without summing scenarios", () => {
+  expect(videoSavings(mock.savings)).toEqual({ scenario: "video_distill", bytes_before: 1043234567, bytes_after: 2150000 });
+  expect(videoSavings(mock.savings.filter(s => s.scenario !== "video_distill"))).toBeUndefined();
+});
+it("provides seven files including jane's offboarding notes", () => {
+  expect(mock.files).toHaveLength(7);
+  expect(mock.files.map(f => f.name)).toEqual(["talk.mp4", "deck_a.pdf", "deck_a (1).pdf", "deck_b.pdf", "deck_a_rev2.pdf", "deck_b - Copy.pdf", "my_notes.pdf"]);
+  expect(mock.files.find(f => f.name === "deck_a_rev2.pdf")?.source).toBe("sharepoint");
+  expect(mock.files.find(f => f.name === "my_notes.pdf")).toMatchObject({ source: "offboarding", owner: "jane" });
+});
+it("provides frames at 0, 8, 16 seconds with two to three segments each", () => {
+  expect(mock.recording.frames.map(f => f.t_sec)).toEqual([0, 8, 16]);
+  expect(mock.recording.frames.map(f => frameSegments(mock.recording, f.id).length)).toEqual([2, 3, 2]);
+  expect(frameSegments(mock.recording, "f8").map(s => s.id)).toEqual(["s3", "s4", "s5"]);
+  expect(frameAtTime(mock.recording, 8)?.id).toBe("f8");
+  expect(frameAtTime(mock.recording, 96)?.id).toBe("f16");
+});
+it("requests the recording by sha12", async () => {
+  const fetchMock = vi.fn().mockRejectedValue(new Error("offline"));
+  vi.stubGlobal("fetch", fetchMock);
+  expect(await getRecording("3fa9c0d1e2b4")).toEqual(mock.recording);
+  expect(fetchMock.mock.calls[0]?.[0]).toContain("/api/recording/3fa9c0d1e2b4");
 });
 it("calculates saved percent from before and after", () => expect(percentSaved(8400000, 2100000)).toBe(75));
 it("formats 96 seconds as 01:36", () => expect(formatTimestamp(96)).toBe("01:36"));

@@ -35,4 +35,5 @@ export const getStats = () => request("stats", mock.stats);
 export const getSavings = () => request("savings", mock.savings);
 export const getFiles = () => request("files", mock.files);
 export const getDuplicates = () => request("duplicates", mock.duplicates);
+export const getRecording = (sha12: string) => request(`recording/${encodeURIComponent(sha12)}`, mock.recording);
 export const search = (query: string) => request(`search?q=${encodeURIComponent(query)}`, mock.searchResults.filter((result) => `${result.snippet} ${result.file} ${result.slide_id}`.toLowerCase().includes(query.trim().toLowerCase())));
