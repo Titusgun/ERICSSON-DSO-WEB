@@ -33,3 +33,4 @@ use the editor.
 - Keep the four workspace views as tabs on the index route because this is a single-page workspace.
 - Keep external API fetching in `src/lib/api.ts` and typed fallback fixtures in `src/mocks/data.ts` so views share consistent data and fallback status.
 - Race API reads (including response parsing) against an AbortController deadline and run browser queries even offline so fallback never waits for network reconnection.
+- Keep recording inspection as a nested Search view with frame-selected transcript segments so the four-tab single-page workspace stays intact.
