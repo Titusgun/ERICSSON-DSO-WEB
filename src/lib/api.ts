@@ -7,14 +7,27 @@ export const subscribeMock = (listener: () => void) => { listeners.add(listener)
 export const getMockStatus = () => mockUsed;
 
 async function request<T>(path: string, fallback: T): Promise<T> {
+  const controller = new AbortController();
+  let timeout: ReturnType<typeof setTimeout> | undefined;
   try {
-    const response = await fetch(`${API_URL}/api/${path}`, { signal: AbortSignal.timeout(3500) });
-    if (!response.ok) throw new Error(`API returned ${response.status}`);
-    return await response.json() as T;
+    const deadline = new Promise<never>((_, reject) => {
+      timeout = setTimeout(() => {
+        reject(new Error("API timed out"));
+        controller.abort();
+      }, 1500);
+    });
+    const responseData = (async () => {
+      const response = await fetch(`${API_URL}/api/${path}`, { signal: controller.signal });
+      if (!response.ok) throw new Error(`API returned ${response.status}`);
+      return await response.json() as T;
+    })();
+    return await Promise.race([responseData, deadline]);
   } catch {
     mockUsed = true;
     listeners.forEach((listener) => listener());
     return structuredClone(fallback);
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
