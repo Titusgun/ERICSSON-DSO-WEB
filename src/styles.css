@@ -181,7 +181,7 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
 .lightbox-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 12px 20px; }
 .lightbox-stage { flex: 1; min-height: 0; display: flex; gap: 16px; padding: 0 20px 20px; align-items: center; justify-content: center; }
 .lightbox-stage figure { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin: 0; }
-.lightbox-stage img { max-width: 100%; max-height: 100%; min-height: 0; object-fit: contain; }
+.lightbox-stage img { width: 100%; height: 100%; min-height: 0; object-fit: contain; }
 .lightbox-stage figcaption { font-size: 14px; }
 .lightbox-missing { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 @media (max-width: 720px) { .lightbox-split { flex-direction: column; } .lightbox-split figure { height: auto; flex: 1; min-height: 0; } }
