@@ -36,4 +36,3 @@ use the editor.
 - Keep recording inspection as a nested Search view with frame-selected transcript segments so the single-page workspace stays intact.
 - Render Offboarding as a read-only dry-run review using the shared API fallback; no deletion actions belong in this review.
 - Keep frame scrolling inside the Recording view and share chronological selection between buttons and keyboard navigation so transcript updates stay synchronized without scrolling the page.
-- Keep bulk copy deletion non-mutating until an external deletion contract is supplied; target only whole-file copy matches and exclude any kept-copy references to avoid deleting retained files.
