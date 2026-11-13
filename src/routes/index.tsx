@@ -8,7 +8,7 @@ import { FrameLightbox } from "@/components/frame-lightbox";
 import { OffboardingView } from "@/components/offboarding-view";
 import { recordingSha, videoSavings } from "@/lib/workspace";
 import { API_URL, getStats, getSavings, getFiles, getDuplicates, getOffboarding, search, subscribeMock, getMockStatus } from "@/lib/api";
-import { formatBytes, formatTimestamp, percentSaved } from "@/lib/format";
+import { formatBytes, formatTimestamp, percentSaved, totalStorage } from "@/lib/format";
 import type { SearchResult, StorageFile } from "@/mocks/data";
 
 export const Route = createFileRoute("/")({
@@ -64,7 +64,7 @@ function Index() {
   return <div className="min-h-screen">
     <header className="app-header">
       <div className="workspace header-inner">
-        <div className="flex items-center gap-3"><button type="button" className="brand-logo-button" aria-label="Go to Dashboard" onClick={() => setTab("Dashboard")}><picture><source srcSet="/ericsson-logo-white.png" media="(prefers-color-scheme: dark)" /><img src="/ericsson-logo.png" alt="Ericsson" className="brand-logo" /></picture></button></div>
+        <div className="flex items-center gap-3"><button type="button" className="brand-logo-button" aria-label="Go to Dashboard" onClick={() => setTab("Dashboard")}><picture><source srcSet="/ericsson-logo-white.png" media="(prefers-color-scheme: dark)" /><img src="/ericsson-logo.png" alt="Ericsson" className="brand-logo" /></picture></button><span className="brand-descriptor">Data Storage Optimization</span></div>
         <div className="flex items-center gap-4">{mock && <span className="mock-badge" role="status"><span className="status-dot" />MOCK DATA</span>}</div>
       </div>
       <nav className="workspace tabs-bar" aria-label="Workspace tabs" role="tablist">{tabs.map(({ name }) => <Button key={name} variant="ghost" className="tab-button" role="tab" id={`tab-${name}`} aria-controls="workspace-panel" aria-selected={tab === name} data-active={tab === name} onClick={() => setTab(name)}>{name}</Button>)}</nav>
@@ -72,6 +72,21 @@ function Index() {
     <main className="workspace page-body" key={tab} id="workspace-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
       <div className="flex items-start justify-between gap-4"><div><h1 className="page-title">{tab === "Dashboard" ? "Storage overview" : tab === "Search" ? "Search" : tab === "Duplicates" ? "Duplicates" : tab === "Offboarding" ? "Offboarding review" : "File inventory"}</h1><p className="page-subtitle">{tab === "Dashboard" ? "Across scanned folders" : tab === "Search" ? "" : tab === "Duplicates" ? "" : tab === "Offboarding" ? "Files of a departing employee, compared with copies kept elsewhere." : ""}</p></div></div>
       {tab === "Dashboard" && <>
+        <section className="total-storage" aria-label="Total storage">
+          {(() => { const totals = totalStorage(files.data, savings.data); return totals ? <>
+            <div className="total-storage-figures">
+              <div><div className="text-sm text-muted-foreground">Original size</div><div className="metric-number">{formatBytes(totals.original)}</div></div>
+              <div><div className="text-sm text-muted-foreground">Reduced size</div><div className="metric-number">{formatBytes(totals.reduced)}</div></div>
+              <div><div className="text-sm text-muted-foreground">Saved</div><div className="metric-number">{totals.savedPct.toFixed(1)}%</div><div className="total-storage-saved-amount">{formatBytes(totals.original - totals.reduced)} saved</div></div>
+            </div>
+            <div className="total-storage-bar" role="img" aria-label={`Reduced size is ${formatBytes(totals.reduced)} of ${formatBytes(totals.original)} original`}><div className="total-storage-bar-fill" style={{ width: `${Math.min(100, Math.max(0, (totals.reduced / totals.original) * 100))}%` }} /></div>
+            {!totals.hasSavings && <p className="total-storage-note">Savings not calculated yet.</p>}
+          </> : <div className="total-storage-figures">
+            <div><div className="text-sm text-muted-foreground">Original size</div><div className="metric-number">—</div></div>
+            <div><div className="text-sm text-muted-foreground">Reduced size</div><div className="metric-number">—</div></div>
+            <div><div className="text-sm text-muted-foreground">Saved</div><div className="metric-number">—</div></div>
+          </div>; })()}
+        </section>
         <div className="metric-grid">{metrics.map(({ label, value }) => <div key={label} className="metric-card"><div className="text-sm text-muted-foreground">{label}</div><div className="metric-number">{value ?? "—"}</div></div>)}</div>
         <section className="video-savings" aria-label="Video storage savings">
           <h2 className="section-heading">Video → text + key frames</h2>

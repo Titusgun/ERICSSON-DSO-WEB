@@ -20,7 +20,7 @@ export type Offboarding = {
 export const stats: Stats = { files: 7, frames: 3, segments: 12, slides: 16, duplicates: 5 };
 export const savings: Savings[] = [
   { scenario: "video_distill", bytes_before: 1043234567, bytes_after: 2150000 },
-  { scenario: "dedup", bytes_before: 52000000, bytes_after: 31000000 },
+  { scenario: "dedup", bytes_before: 1043483567, bytes_after: 1043390567 },
   { scenario: "offboarding", bytes_before: 70000, bytes_after: 18000 },
 ];
 export const files: StorageFile[] = [
