@@ -13,9 +13,9 @@ import type { SearchResult, StorageFile } from "@/mocks/data";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
-    { title: "dso — Data Storage Optimization" },
+    { title: "Storage overview" },
     { name: "description", content: "Explore storage savings, search recordings, inspect duplicates, and review offboarding files without deleting anything in the dso workspace." },
-    { property: "og:title", content: "dso — Data Storage Optimization" },
+    { property: "og:title", content: "Storage overview" },
     { property: "og:description", content: "A clear view of your files, storage savings, duplicates, and dry-run offboarding review." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
@@ -64,7 +64,7 @@ function Index() {
   return <div className="min-h-screen">
     <header className="app-header">
       <div className="workspace header-inner">
-        <div className="flex items-center gap-3"><span className="brand-name">dso</span><span className="brand-descriptor ml-4 border-l pl-5 text-sm text-muted-foreground">Data Storage Optimization</span></div>
+        <div className="flex items-center gap-3"><button type="button" className="brand-logo-button" aria-label="Go to Dashboard" onClick={() => setTab("Dashboard")}><img src="/ericsson-logo.png" alt="Ericsson" className="brand-logo" /></button></div>
         <div className="flex items-center gap-4">{mock && <span className="mock-badge" role="status"><span className="status-dot" />MOCK DATA</span>}</div>
       </div>
       <nav className="workspace tabs-bar" aria-label="Workspace tabs" role="tablist">{tabs.map(({ name }) => <Button key={name} variant="ghost" className="tab-button" role="tab" id={`tab-${name}`} aria-controls="workspace-panel" aria-selected={tab === name} data-active={tab === name} onClick={() => setTab(name)}>{name}</Button>)}</nav>
@@ -75,7 +75,7 @@ function Index() {
         <div className="metric-grid">{metrics.map(({ label, value }) => <div key={label} className="metric-card"><div className="text-sm text-muted-foreground">{label}</div><div className="metric-number">{value ?? "—"}</div></div>)}</div>
         <section className="video-savings" aria-label="Video storage savings">
           <h2 className="section-heading">Video → text + key frames</h2>
-          {video ? <div className="table-wrap"><table className="data-table savings-table"><thead><tr><th>Before</th><th>After</th><th>Storage saved</th><th>Reduction</th></tr></thead><tbody><tr><td>{formatBytes(before)} <span className="exact-bytes">({before.toLocaleString("en")} B)</span></td><td>{formatBytes(after)} <span className="exact-bytes">({after.toLocaleString("en")} B)</span></td><td>{formatBytes(before - after)} <span className="exact-bytes">({(before - after).toLocaleString("en")} B)</span></td><td>{percentSaved(before, after).toFixed(1)}%</td></tr></tbody></table></div> : <p className="mt-4 text-muted-foreground">No savings data yet. Run <code>dso savings</code>.</p>}
+          {video ? <div className="table-wrap"><table className="data-table savings-table"><thead><tr><th>Before</th><th>After</th><th>Storage saved</th><th>Reduction</th></tr></thead><tbody><tr><td>{formatBytes(before)}</td><td>{formatBytes(after)}</td><td>{formatBytes(before - after)}</td><td>{percentSaved(before, after).toFixed(1)}%</td></tr></tbody></table></div> : <p className="mt-4 text-muted-foreground">No savings data yet. Run <code>dso savings</code>.</p>}
         </section>
         <section className="mt-9"><div className="flex items-center justify-between gap-3"><h2 className="section-heading">Savings by scenario</h2><span className="text-sm text-muted-foreground">{savings.data?.length ?? 0} optimization scenarios</span></div><div className="table-wrap"><table className="data-table scenario-table"><thead><tr><th>Scenario</th><th>Before</th><th>After</th><th>Storage saved</th><th className="text-right">Reduction</th></tr></thead><tbody>{savings.data?.map(s => { const config = scenarios[s.scenario]; const percentage = percentSaved(s.bytes_before, s.bytes_after); return <tr key={s.scenario}><td><div className="flex items-center gap-3"><div><div className="font-medium">{config?.name ?? s.scenario}</div></div></div></td><td className="font-mono text-muted-foreground">{formatBytes(s.bytes_before)}</td><td className="font-mono">{formatBytes(s.bytes_after)}</td><td><span className="font-mono">{formatBytes(s.bytes_before - s.bytes_after)}</span></td><td className="text-right"><span className="font-mono">{percentage.toFixed(1)}%</span></td></tr>; })}{!savings.data?.length && <tr><td colSpan={5}>No savings data yet. Run <code>dso savings</code>.</td></tr>}</tbody></table></div></section>
       </>}
@@ -83,7 +83,6 @@ function Index() {
       {tab === "Files" && <FilesView files={files.data} />}
       {tab === "Offboarding" && <OffboardingView data={offboarding.data} />}
       {tab === "Duplicates" && <div className="mt-8">{duplicates.data ? [...new Set(duplicates.data.map(d => d.kind))].map(kind => <section key={kind} className="mb-9"><div className="flex items-center gap-3"><h2 className="section-heading">{duplicateKinds[kind]?.title ?? kind}</h2><span className="pill">{duplicates.data.filter(d => d.kind === kind).length}</span></div><p className="mt-1 text-sm text-muted-foreground">{duplicateKinds[kind]?.subtitle}</p>{duplicates.data.filter(d => d.kind === kind).map((d, i) => <div className="duplicate-row" key={i}><div><div className="section-label mb-2 text-muted-foreground">{kind === "revision" ? "Older revision" : kind === "slide_text" ? "References" : "Matching copy"}</div><div className="flex items-center gap-3"><div className="type-icon"><FileText size={18} /></div><span className="break-all font-medium">{d.a}</span></div>{kind === "file_exact" && <span className="pill mt-3">Safe to delete (dry run)</span>}{d.note && <p className="mt-2 text-sm text-muted-foreground">{d.note}</p>}</div><ArrowRight className="duplicate-arrow text-muted-foreground" size={20} /><div><div className="section-label mb-2 text-primary">{kind === "slide_text" ? "Single source" : "Kept copy"}</div><div className="flex items-center gap-3"><div className="type-icon"><CheckCheck size={18} className="text-primary" /></div><span className="break-all font-medium">{d.b}</span><span className="pill ml-auto"><Check size={12} className="mr-1" />{kind === "slide_text" ? "Single source" : "Keep"}</span></div></div></div>)}</section>) : <div className="empty-state">Loading duplicate matches…</div>}{duplicates.data?.length === 0 && <div className="empty-state">No duplicates found.</div>}</div>}
-      <footer className="workspace-footer"><span>Original files remain unchanged</span><span>dso · Data Storage Optimization</span></footer>
     </main>
   </div>;
 }
