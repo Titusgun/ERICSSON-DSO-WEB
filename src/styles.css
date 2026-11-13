@@ -71,6 +71,7 @@
     --muted: oklch(0.247 0 0);
     --accent: oklch(0.285 0 0);
   }
+  .brand-logo { filter: invert(1); }
 }
 @layer base {
   * { border-color: var(--border); }
@@ -82,8 +83,8 @@
 .workspace { max-width: 1280px; margin-inline: auto; padding-inline: 48px; }
 .app-header { background: var(--card); border-bottom: 1px solid var(--border); }
 .header-inner { height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.brand-mark { width: 43px; height: 43px; display: grid; place-items: center; color: var(--primary); background: var(--accent); border-radius: 2px; }
-.brand-name { font-size: 28px; font-weight: 500; line-height: 1; }
+.brand-logo-button { display: flex; align-items: center; padding: 0; border: 0; background: transparent; }
+.brand-logo { height: 28px; width: auto; display: block; }
 .mock-badge { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border: 2px solid var(--signal); color: var(--signal); background: var(--signal-soft); font-size: 14px; font-weight: 700; border-radius: 2px; white-space: nowrap; }
 .status-dot { height: 6px; width: 6px; border-radius: 50%; background: currentColor; }
 .tabs-bar { display: flex; gap: 32px; height: 56px; align-items: stretch; overflow-x: auto; }
@@ -110,7 +111,6 @@
 .table-wrap { margin-top: 20px; overflow-x: auto; border: 1px solid var(--border); border-radius: 2px; }
 .type-icon { width: 38px; height: 38px; display: grid; place-items: center; background: var(--muted); border-radius: 2px; color: var(--muted-foreground); flex-shrink: 0; }
 .pill { display: inline-flex; align-items: center; padding: 3px 8px; background: var(--accent); color: var(--primary); border-radius: 2px; font-size: 14px; font-weight: 500; }
-.workspace-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; font-size: 14px; color: var(--muted-foreground); gap: 20px; }
 .search-form { display: flex; gap: 12px; margin-top: 28px; }
 .search-field { display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); background: var(--card); border-radius: 2px; padding: 0 18px; flex: 1; }
 .search-field:focus-within { border-color: var(--primary); outline: 1px solid var(--primary); }
@@ -189,7 +189,6 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
 
 /* Engineering workspace: neutral surfaces, compact data, explicit status. */
 .video-savings { margin-top: 32px; }
-.exact-bytes { display: block; font-size: 14px; color: var(--muted-foreground); margin-top: 8px; }
 .savings-table th, .savings-table td,
 .scenario-table th:not(:first-child), .scenario-table td:not(:first-child),
 .files-table th:nth-child(3), .files-table td:nth-child(3),
@@ -201,7 +200,6 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
 .duplicate-row .pill { color: var(--success); }
 .mock-badge { padding: 8px 12px; border-width: 1px; color: var(--foreground); font-weight: 500; }
 .mock-badge .status-dot { background: var(--signal); }
-.brand-descriptor { margin-left: 8px; padding-left: 16px; }
 .type-icon { background: transparent; width: 24px; height: 24px; }
 .page-subtitle:empty { display: none; }
 .recording-frame[aria-pressed="true"] { background: var(--card); }
