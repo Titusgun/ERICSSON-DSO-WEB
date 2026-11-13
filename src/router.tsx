@@ -4,7 +4,12 @@ import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
   // One client per request: a module-level QueryClient leaks cached data between SSR requests.
-  const queryClient = new QueryClient();
+  // refetchInterval: reload every query every 10 s, so results from `dso watch`
+  // (new uploads, duplicates, savings) appear live without a page reload.
+  // Paused while the tab is hidden (refetchIntervalInBackground defaults to false).
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { refetchInterval: 10_000 } },
+  });
 
   const router = createRouter({
     routeTree,
