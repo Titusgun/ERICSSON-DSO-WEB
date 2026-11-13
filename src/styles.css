@@ -71,7 +71,6 @@
     --muted: oklch(0.247 0 0);
     --accent: oklch(0.285 0 0);
   }
-  .brand-logo { filter: invert(1); }
 }
 @layer base {
   * { border-color: var(--border); }

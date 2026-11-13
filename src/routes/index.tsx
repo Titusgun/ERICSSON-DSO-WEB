@@ -64,7 +64,7 @@ function Index() {
   return <div className="min-h-screen">
     <header className="app-header">
       <div className="workspace header-inner">
-        <div className="flex items-center gap-3"><button type="button" className="brand-logo-button" aria-label="Go to Dashboard" onClick={() => setTab("Dashboard")}><img src="/ericsson-logo.png" alt="Ericsson" className="brand-logo" /></button></div>
+        <div className="flex items-center gap-3"><button type="button" className="brand-logo-button" aria-label="Go to Dashboard" onClick={() => setTab("Dashboard")}><picture><source srcSet="/ericsson-logo-white.png" media="(prefers-color-scheme: dark)" /><img src="/ericsson-logo.png" alt="Ericsson" className="brand-logo" /></picture></button></div>
         <div className="flex items-center gap-4">{mock && <span className="mock-badge" role="status"><span className="status-dot" />MOCK DATA</span>}</div>
       </div>
       <nav className="workspace tabs-bar" aria-label="Workspace tabs" role="tablist">{tabs.map(({ name }) => <Button key={name} variant="ghost" className="tab-button" role="tab" id={`tab-${name}`} aria-controls="workspace-panel" aria-selected={tab === name} data-active={tab === name} onClick={() => setTab(name)}>{name}</Button>)}</nav>
