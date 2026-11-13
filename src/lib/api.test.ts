@@ -108,7 +108,9 @@ it("derives the recording sha from sha12 first, then frame_image, never slide_id
   expect(recordingSha({ ...mock.searchResults[0]!, sha12: null, frame_image: null })).toBeUndefined();
 });
 it("calculates saved percent from before and after", () => expect(percentSaved(8400000, 2100000)).toBe(75));
-it("formats 96 seconds as 01:36", () => expect(formatTimestamp(96)).toBe("01:36"));
+it("formats 96 seconds as 00:01:36", () => expect(formatTimestamp(96)).toBe("00:01:36"));
+it("formats 4500 seconds as 01:15:00", () => expect(formatTimestamp(4500)).toBe("01:15:00"));
+it("formats 0 seconds as 00:00:00", () => expect(formatTimestamp(0)).toBe("00:00:00"));
 it("requests offboarding from its API endpoint and uses a successful review", async () => {
   const review = { ...mock.offboarding, simulated: false };
   const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => review });

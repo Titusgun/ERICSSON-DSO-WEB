@@ -11,33 +11,48 @@ function open(initialTime = 0) {
 }
 it("moves between chronological frames with buttons and stops at the boundaries", async () => {
   open();
-  await screen.findByRole("button", { name: "Frame 00:00" });
+  await screen.findByRole("button", { name: "Frame 00:00:00" });
   expect(screen.getByRole("button", { name: "Previous frame" })).toBeDisabled();
   fireEvent.click(screen.getByRole("button", { name: "Next frame" }));
-  expect(screen.getByRole("button", { name: "Frame 00:08" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Frame 00:00:08" })).toHaveAttribute("aria-pressed", "true");
   const segment = recording.segments.find(segment => segment.frame_id === "f8");
   if (!segment) throw new Error("Missing frame 00:08 transcript fixture");
   expect(screen.getByText(segment.text)).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: "Next frame" }));
-  expect(screen.getByRole("button", { name: "Frame 00:16" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Frame 00:00:16" })).toHaveAttribute("aria-pressed", "true");
   expect(screen.getByRole("button", { name: "Next frame" })).toBeDisabled();
   fireEvent.click(screen.getByRole("button", { name: "Previous frame" }));
-  expect(screen.getByRole("button", { name: "Frame 00:08" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Frame 00:00:08" })).toHaveAttribute("aria-pressed", "true");
 });
 it("uses up/down arrows without wrapping or changing frames while typing", async () => {
   open(8);
-  await screen.findByRole("button", { name: "Frame 00:08" });
+  await screen.findByRole("button", { name: "Frame 00:00:08" });
   fireEvent.keyDown(window, { key: "ArrowDown" });
-  expect(screen.getByRole("button", { name: "Frame 00:16" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Frame 00:00:16" })).toHaveAttribute("aria-pressed", "true");
   fireEvent.keyDown(window, { key: "ArrowDown" });
-  expect(screen.getByRole("button", { name: "Frame 00:16" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Frame 00:00:16" })).toHaveAttribute("aria-pressed", "true");
   fireEvent.keyDown(window, { key: "ArrowUp" });
-  expect(screen.getByRole("button", { name: "Frame 00:08" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Frame 00:00:08" })).toHaveAttribute("aria-pressed", "true");
   const input = document.createElement("input");
   document.body.append(input);
   fireEvent.keyDown(input, { key: "ArrowUp" });
-  expect(screen.getByRole("button", { name: "Frame 00:08" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: "Frame 00:00:08" })).toHaveAttribute("aria-pressed", "true");
   input.remove();
   fireEvent.keyDown(window, { key: "ArrowUp" });
-  await waitFor(() => expect(screen.getByRole("button", { name: "Frame 00:00" })).toHaveAttribute("aria-pressed", "true"));
+  await waitFor(() => expect(screen.getByRole("button", { name: "Frame 00:00:00" })).toHaveAttribute("aria-pressed", "true"));
+});it("opens the selected frame in a lightbox, moves with left/right and closes with Escape", async () => {
+  open(8);
+  fireEvent.click(await screen.findByRole("button", { name: "Enlarge" }));
+  const dialog = screen.getByRole("dialog", { name: "Frame 00:00:08" });
+  expect(dialog).toBeInTheDocument();
+  fireEvent.keyDown(window, { key: "ArrowRight" });
+  expect(screen.getByRole("dialog", { name: "Frame 00:00:16" })).toBeInTheDocument();
+  fireEvent.keyDown(window, { key: "ArrowRight" });
+  expect(screen.getByRole("dialog", { name: "Frame 00:00:16" })).toBeInTheDocument();
+  fireEvent.keyDown(window, { key: "ArrowLeft" });
+  expect(screen.getByRole("dialog", { name: "Frame 00:00:08" })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Show slide" }));
+  expect(screen.getByAltText("Matched slide 9b1c22aa01ff:2:9f2c01ab")).toHaveAttribute("src", "http://localhost:5000/out/slides/9b1c22aa01ff/p0002.webp");
+  fireEvent.keyDown(window, { key: "Escape" });
+  expect(screen.queryByRole("dialog")).toBeNull();
 });

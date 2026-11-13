@@ -1,8 +1,8 @@
 export type Stats = { files: number; frames: number; segments: number; slides: number; duplicates: number };
 export type Savings = { scenario: string; bytes_before: number; bytes_after: number };
 export type StorageFile = { name: string; kind: string; size_bytes: number; source: string; sha256: string; owner?: string };
-export type Recording = { source: { file_name: string }; duration_sec: number; frames: { id: string; t_sec: number; image: string; slide_id: string }[]; segments: { id: string; start_sec: number; end_sec: number; speaker: string; text: string; frame_id: string }[] };
-export type SearchResult = { kind: string; file: string; t_sec: number | null; frame_image: string | null; slide_id: string | null; sha12?: string | null; snippet: string };
+export type Recording = { source: { file_name: string }; duration_sec: number; frames: { id: string; t_sec: number; image: string; slide_id: string | null; slide_image?: string | null }[]; segments: { id: string; start_sec: number; end_sec: number; speaker: string; text: string; frame_id: string }[] };
+export type SearchResult = { kind: string; file: string; t_sec: number | null; frame_image: string | null; slide_id: string | null; slide_image?: string | null; sha12?: string | null; snippet: string };
 export type Duplicate = { kind: string; a: string; b: string; note?: string };
 export type Offboarding = {
   dry_run: true;
@@ -33,7 +33,7 @@ export const files: StorageFile[] = [
   { name: "my_notes.pdf", kind: "document", size_bytes: 18000, source: "offboarding", owner: "jane", sha256: "e43f6a8b1c3d5e7f9a2b4c6d8e1f3a5b7c9d2e4f6a8b1c3d5e7f9a2b4c6d8e1f" },
 ];
 export const searchResults: SearchResult[] = [
-  { kind: "segment", file: "talk.mp4", t_sec: 96.0, frame_image: "frames/3fa9c0d1e2b4/f0012.webp", slide_id: "3fa9c0d1e2b4:2:9f2c01ab", sha12: "3fa9c0d1e2b4", snippet: "As you see here, the [latency] drops from 12 ms to 4 ms" },
+  { kind: "segment", file: "talk.mp4", t_sec: 96.0, frame_image: "frames/3fa9c0d1e2b4/f0012.webp", slide_id: "3fa9c0d1e2b4:2:9f2c01ab", slide_image: "slides/9b1c22aa01ff/p0002.webp", sha12: "3fa9c0d1e2b4", snippet: "As you see here, the [latency] drops from 12 ms to 4 ms" },
   { kind: "slide", file: "deck_a.pdf", t_sec: null, frame_image: null, slide_id: "9b1c22aa01ff:2:9f2c01ab", snippet: "Median [latency] dropped from 12 ms to 4 ms" },
 ];
 export const offboarding: Offboarding = {
@@ -54,9 +54,9 @@ export const duplicates: Duplicate[] = [
 export const recording: Recording = {
   source: { file_name: "talk.mp4" }, duration_sec: 120,
   frames: [
-    { id: "f0", t_sec: 0, image: "/recording-frames/frame-0.svg", slide_id: "9b1c22aa01ff:1:overview" },
-    { id: "f8", t_sec: 8, image: "/recording-frames/frame-8.svg", slide_id: "9b1c22aa01ff:2:9f2c01ab" },
-    { id: "f16", t_sec: 16, image: "/recording-frames/frame-16.svg", slide_id: "9b1c22aa01ff:3:summary" },
+    { id: "f0", t_sec: 0, image: "/recording-frames/frame-0.svg", slide_id: "9b1c22aa01ff:1:overview", slide_image: "slides/9b1c22aa01ff/p0001.webp" },
+    { id: "f8", t_sec: 8, image: "/recording-frames/frame-8.svg", slide_id: "9b1c22aa01ff:2:9f2c01ab", slide_image: "slides/9b1c22aa01ff/p0002.webp" },
+    { id: "f16", t_sec: 16, image: "/recording-frames/frame-16.svg", slide_id: "9b1c22aa01ff:3:summary", slide_image: "slides/9b1c22aa01ff/p0003.webp" },
   ],
   segments: [
     { id: "s1", start_sec: 0, end_sec: 4, speaker: "Presenter", text: "Today we will review the latency measurements from our latest test.", frame_id: "f0" },

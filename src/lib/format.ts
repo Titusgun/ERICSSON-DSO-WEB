@@ -5,4 +5,7 @@ export function formatBytes(bytes: number) {
   return `${new Intl.NumberFormat("en", { maximumFractionDigits: index < 2 ? 0 : 2 }).format(bytes / 1000 ** index)} ${units[index]}`;
 }
 export const percentSaved = (before: number, after: number) => before > 0 ? ((before - after) / before) * 100 : 0;
-export const formatTimestamp = (seconds: number) => `${Math.floor(seconds / 60).toString().padStart(2, "0")}:${Math.floor(seconds % 60).toString().padStart(2, "0")}`;
+export const formatTimestamp = (seconds: number) => {
+  const total = Math.max(0, Math.floor(seconds));
+  return [Math.floor(total / 3600), Math.floor((total % 3600) / 60), total % 60].map(n => n.toString().padStart(2, "0")).join(":");
+};
