@@ -40,4 +40,19 @@ it("uses up/down arrows without wrapping or changing frames while typing", async
   input.remove();
   fireEvent.keyDown(window, { key: "ArrowUp" });
   await waitFor(() => expect(screen.getByRole("button", { name: "Frame 00:00:00" })).toHaveAttribute("aria-pressed", "true"));
+});it("opens the selected frame in a lightbox, moves with left/right and closes with Escape", async () => {
+  open(8);
+  fireEvent.click(await screen.findByRole("button", { name: "Enlarge" }));
+  const dialog = screen.getByRole("dialog", { name: "Frame 00:00:08" });
+  expect(dialog).toBeInTheDocument();
+  fireEvent.keyDown(window, { key: "ArrowRight" });
+  expect(screen.getByRole("dialog", { name: "Frame 00:00:16" })).toBeInTheDocument();
+  fireEvent.keyDown(window, { key: "ArrowRight" });
+  expect(screen.getByRole("dialog", { name: "Frame 00:00:16" })).toBeInTheDocument();
+  fireEvent.keyDown(window, { key: "ArrowLeft" });
+  expect(screen.getByRole("dialog", { name: "Frame 00:00:08" })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Show slide" }));
+  expect(screen.getByAltText("Matched slide 9b1c22aa01ff:2:9f2c01ab")).toHaveAttribute("src", "http://localhost:5000/out/slides/9b1c22aa01ff/p0002.webp");
+  fireEvent.keyDown(window, { key: "Escape" });
+  expect(screen.queryByRole("dialog")).toBeNull();
 });
