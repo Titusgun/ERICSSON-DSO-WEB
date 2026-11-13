@@ -74,11 +74,14 @@ const scenarios: Record<string, { name: string }> = {
   video_distill: { name: "Video distillation" },
   dedup: { name: "Deduplication" },
   offboarding: { name: "Offboarding" },
+  revisions: { name: "Old revisions" },
 };
 const duplicateKinds: Record<string, { title: string; subtitle: string }> = {
   file_exact: { title: "Exact file matches", subtitle: "Identical content, different files" },
   slide_text: { title: "Matching slide text", subtitle: "Repeated content across documents" },
   revision: { title: "File revisions", subtitle: "Related versions of the same document" },
+  file_content: { title: "Same content, saved again", subtitle: "Every slide identical, different file" },
+  slide_visual: { title: "Similar-looking slides", subtitle: "Same picture, slightly different text" },
 };
 
 function Index() {
