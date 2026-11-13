@@ -4,12 +4,24 @@ export type StorageFile = { name: string; kind: string; size_bytes: number; sour
 export type Recording = { source: { file_name: string }; duration_sec: number; frames: { id: string; t_sec: number; image: string; slide_id: string }[]; segments: { id: string; start_sec: number; end_sec: number; speaker: string; text: string; frame_id: string }[] };
 export type SearchResult = { kind: string; file: string; t_sec: number | null; frame_image: string | null; slide_id: string | null; sha12?: string | null; snippet: string };
 export type Duplicate = { kind: string; a: string; b: string; note?: string };
+export type Offboarding = {
+  dry_run: true;
+  simulated: boolean;
+  owners: string[];
+  total_files: number;
+  total_bytes: number;
+  safe_files: number;
+  keep_files: number;
+  freeable_bytes: number;
+  percent_freed: number;
+  files: { name: string; path: string; owner: string; size_bytes: number; sha256: string; verdict: "safe to delete" | "keep"; copy_at: string | null }[];
+};
 
 export const stats: Stats = { files: 7, frames: 3, segments: 12, slides: 16, duplicates: 5 };
 export const savings: Savings[] = [
   { scenario: "video_distill", bytes_before: 1043234567, bytes_after: 2150000 },
   { scenario: "dedup", bytes_before: 52000000, bytes_after: 31000000 },
-  { scenario: "offboarding", bytes_before: 8400000, bytes_after: 2100000 },
+  { scenario: "offboarding", bytes_before: 70000, bytes_after: 18000 },
 ];
 export const files: StorageFile[] = [
   { name: "talk.mp4", kind: "video", size_bytes: 1043234567, source: "play", sha256: "3fa9c0d1e2b4a6f8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8f0a2b4c6d8e0f2a4b6c8" },
@@ -24,6 +36,15 @@ export const searchResults: SearchResult[] = [
   { kind: "segment", file: "talk.mp4", t_sec: 96.0, frame_image: "frames/3fa9c0d1e2b4/f0012.webp", slide_id: "3fa9c0d1e2b4:2:9f2c01ab", sha12: "3fa9c0d1e2b4", snippet: "As you see here, the [latency] drops from 12 ms to 4 ms" },
   { kind: "slide", file: "deck_a.pdf", t_sec: null, frame_image: null, slide_id: "9b1c22aa01ff:2:9f2c01ab", snippet: "Median [latency] dropped from 12 ms to 4 ms" },
 ];
+export const offboarding: Offboarding = {
+  dry_run: true, simulated: true, owners: ["jane"],
+  total_files: 2, total_bytes: 70000, safe_files: 1, keep_files: 1,
+  freeable_bytes: 52000, percent_freed: 52000 / 70000 * 100,
+  files: [
+    { name: "deck_b - Copy.pdf", path: "offboarding/jane/deck_b - Copy.pdf", owner: "jane", size_bytes: 52000, sha256: files[5]?.sha256 ?? "", verdict: "safe to delete", copy_at: "sharepoint/deck_b.pdf" },
+    { name: "my_notes.pdf", path: "offboarding/jane/my_notes.pdf", owner: "jane", size_bytes: 18000, sha256: files[6]?.sha256 ?? "", verdict: "keep", copy_at: null },
+  ],
+};
 export const duplicates: Duplicate[] = [
   { kind: "file_exact", a: "deck_a (1).pdf", b: "deck_a.pdf", note: "name hint: (1)" },
   { kind: "slide_text", a: "deck_b.pdf slide 1", b: "deck_a.pdf slide 1" },

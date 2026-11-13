@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getStats, getSavings, getFiles, getDuplicates, getRecording, search, NotFoundError } from "./api";
+import { getStats, getSavings, getFiles, getDuplicates, getOffboarding, getRecording, search, NotFoundError } from "./api";
 import { videoSavings, frameSegments, frameAtTime, recordingSha } from "./workspace";
 import { formatTimestamp, percentSaved } from "./format";
 import * as mock from "@/mocks/data";
@@ -11,6 +11,7 @@ describe("external API fallback", () => {
     { name: "savings", read: getSavings, expected: mock.savings },
     { name: "files", read: getFiles, expected: mock.files },
     { name: "duplicates", read: getDuplicates, expected: mock.duplicates },
+    { name: "offboarding", read: getOffboarding, expected: mock.offboarding },
     { name: "search", read: () => search("latency"), expected: mock.searchResults },
     { name: "recording", read: () => getRecording("3fa9c0d1e2b4"), expected: mock.recording },
   ];
@@ -51,7 +52,7 @@ describe("external API fallback", () => {
   });
   it("preserves all supplied storage values", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
-    expect((await getSavings()).map(s => [s.bytes_before, s.bytes_after])).toEqual([[1043234567, 2150000], [52000000, 31000000], [8400000, 2100000]]);
+    expect((await getSavings()).map(s => [s.bytes_before, s.bytes_after])).toEqual([[1043234567, 2150000], [52000000, 31000000], [70000, 18000]]);
     expect((await getFiles()).slice(0, 3).map(f => f.size_bytes)).toEqual([1043234567, 41000, 41000]);
   });
   it("retains the canonical duplicate copy in b", async () => {
@@ -108,3 +109,33 @@ it("derives the recording sha from sha12 first, then frame_image, never slide_id
 });
 it("calculates saved percent from before and after", () => expect(percentSaved(8400000, 2100000)).toBe(75));
 it("formats 96 seconds as 01:36", () => expect(formatTimestamp(96)).toBe("01:36"));
+it("requests offboarding from its API endpoint and uses a successful review", async () => {
+  const review = { ...mock.offboarding, simulated: false };
+  const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => review });
+  vi.stubGlobal("fetch", fetchMock);
+  expect(await getOffboarding()).toEqual(review);
+  expect(fetchMock.mock.calls[0]?.[0]).toMatch(/\/api\/offboarding$/);
+});
+it("keeps Jane's byte-identical copy deletable and her unique notes retained in the dry run", () => {
+  expect(mock.offboarding.dry_run).toBe(true);
+  expect(mock.offboarding.simulated).toBe(true);
+  expect(mock.offboarding.owners).toEqual(["jane"]);
+  expect(mock.offboarding.files.map(f => [f.name, f.owner, f.size_bytes, f.verdict, f.copy_at])).toEqual([
+    ["deck_b - Copy.pdf", "jane", 52000, "safe to delete", "sharepoint/deck_b.pdf"],
+    ["my_notes.pdf", "jane", 18000, "keep", null],
+  ]);
+  expect(mock.offboarding.files[0]?.sha256).toBe(mock.files.find(f => f.name === "deck_b.pdf")?.sha256);
+});
+it("matches offboarding totals and savings to the two reviewed files", () => {
+  const review = mock.offboarding;
+  expect(review.total_files).toBe(2);
+  expect(review.total_files).toBe(review.files.length);
+  expect(review.total_bytes).toBe(70000);
+  expect(review.total_bytes).toBe(review.files.reduce((sum, f) => sum + f.size_bytes, 0));
+  expect(review.safe_files).toBe(1);
+  expect(review.keep_files).toBe(1);
+  expect(review.freeable_bytes).toBe(52000);
+  expect(review.freeable_bytes).toBe(review.files.filter(f => f.verdict === "safe to delete").reduce((sum, f) => sum + f.size_bytes, 0));
+  expect(review.percent_freed).toBeCloseTo(74.285714);
+  expect(mock.savings.find(s => s.scenario === "offboarding")).toEqual({ scenario: "offboarding", bytes_before: 70000, bytes_after: 18000 });
+});

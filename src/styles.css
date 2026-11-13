@@ -72,7 +72,7 @@
 .brand-name { font-size: 36px; font-weight: 600; line-height: 1; }
 .mock-badge { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border: 2px solid var(--signal); color: var(--signal); background: var(--signal-soft); font-size: 14px; font-weight: 700; border-radius: 4px; white-space: nowrap; }
 .status-dot { height: 6px; width: 6px; border-radius: 50%; background: currentColor; }
-.tabs-bar { display: flex; gap: 32px; height: 65px; align-items: stretch; }
+.tabs-bar { display: flex; gap: 32px; height: 65px; align-items: stretch; overflow-x: auto; }
 .tabs-bar .tab-button { height: 100%; border-radius: 0; background: transparent; color: var(--muted-foreground); border-bottom: 3px solid transparent; padding: 0 4px; font-size: 15px; }
 .tabs-bar .tab-button[data-active="true"] { color: var(--primary); border-bottom-color: var(--primary); }
 .tabs-bar .tab-button:hover { color: var(--primary); }
@@ -83,6 +83,11 @@
 .metric-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-top: 32px; }
 .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 21px 22px; }
 .metric-number { font-size: 38px; font-weight: 500; line-height: 1.3; margin-top: 14px; font-variant-numeric: tabular-nums; }
+.offboarding-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.offboarding-metrics .metric-number { font-size: 32px; }
+.dry-run-banner { display: flex; align-items: flex-start; gap: 14px; padding: 18px 0; border-block: 1px solid var(--border); line-height: 1.6; }
+.pill.neutral-pill { background: var(--muted); color: var(--muted-foreground); }
+.offboarding-table td:last-child { white-space: normal; overflow-wrap: anywhere; min-width: 200px; }
 .summary-band { display: grid; grid-template-columns: 1fr 1fr; margin-top: 28px; padding: 32px 36px; background: var(--summary); color: var(--summary-foreground); position: relative; overflow: hidden; }
 .summary-band .section-label { color: var(--summary-muted); }
 .summary-value { font-size: 80px; line-height: 1.1; font-weight: 600; margin-top: 13px; font-variant-numeric: tabular-nums; }
@@ -131,13 +136,14 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
   .header-inner { height: 82px; }
   .brand-name { font-size: 30px; }
   .brand-descriptor { display: none; }
-  .tabs-bar { gap: 0; justify-content: space-between; height: 60px; }
+  .tabs-bar { gap: 16px; justify-content: space-between; height: 60px; }
   .tabs-bar .tab-button { font-size: 14px; gap: 6px; }
   .tabs-bar .tab-button svg { width: 15px; }
   .page-body { padding-top: 28px; }
   .page-title { font-size: 28px; }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 24px; }
   .metric-card:last-child { grid-column: span 2; }
+  .offboarding-metrics .metric-card:last-child { grid-column: auto; }
   .metric-number { font-size: 32px; margin-top: 8px; }
   .summary-band { grid-template-columns: 1fr; gap: 28px; padding: 26px; }
   .summary-value { font-size: 60px; }

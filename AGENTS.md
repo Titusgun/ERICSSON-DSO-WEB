@@ -30,8 +30,9 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## App architecture
-- Keep the four workspace views as tabs on the index route because this is a single-page workspace.
+- Keep workspace views as tabs on the index route because this is a single-page workspace.
 - Keep external API fetching in `src/lib/api.ts` and typed fallback fixtures in `src/mocks/data.ts` so views share consistent data and fallback status.
 - Race API reads (including response parsing) against an AbortController deadline and run browser queries even offline so fallback never waits for network reconnection.
-- Keep recording inspection as a nested Search view with frame-selected transcript segments so the four-tab single-page workspace stays intact.
+- Keep recording inspection as a nested Search view with frame-selected transcript segments so the single-page workspace stays intact.
+- Render Offboarding as a read-only dry-run review using the shared API fallback; no deletion actions belong in this review.
 - Keep frame scrolling inside the Recording view and share chronological selection between buttons and keyboard navigation so transcript updates stay synchronized without scrolling the page.
