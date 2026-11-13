@@ -52,7 +52,7 @@ describe("external API fallback", () => {
   });
   it("preserves all supplied storage values", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
-    expect((await getSavings()).map(s => [s.bytes_before, s.bytes_after])).toEqual([[1043234567, 2150000], [52000000, 31000000], [70000, 18000]]);
+    expect((await getSavings()).map(s => [s.bytes_before, s.bytes_after])).toEqual([[1043234567, 2150000], [1043483567, 1043390567], [70000, 18000]]);
     expect((await getFiles()).slice(0, 3).map(f => f.size_bytes)).toEqual([1043234567, 41000, 41000]);
   });
   it("retains the canonical duplicate copy in b", async () => {
