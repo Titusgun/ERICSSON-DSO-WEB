@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getStats, getSavings, getFiles, getDuplicates, getOffboarding, getRecording, search, NotFoundError } from "./api";
 import { videoSavings, frameSegments, frameAtTime, recordingSha } from "./workspace";
-import { formatTimestamp, percentSaved } from "./format";
+import { formatTimestamp, percentSaved, totalStorage } from "./format";
 import * as mock from "@/mocks/data";
 
 afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); });
@@ -140,4 +140,36 @@ it("matches offboarding totals and savings to the two reviewed files", () => {
   expect(review.freeable_bytes).toBe(review.files.filter(f => f.verdict === "safe to delete").reduce((sum, f) => sum + f.size_bytes, 0));
   expect(review.percent_freed).toBeCloseTo(74.285714);
   expect(mock.savings.find(s => s.scenario === "offboarding")).toEqual({ scenario: "offboarding", bytes_before: 70000, bytes_after: 18000 });
+});
+describe("totalStorage", () => {
+  const files = [{ size_bytes: 1000 }, { size_bytes: 2000 }, { size_bytes: 3000 }];
+  it("returns null when there are no files", () => {
+    expect(totalStorage([], [])).toBeNull();
+    expect(totalStorage(undefined, undefined)).toBeNull();
+  });
+  it("uses dedup bytes_after and adjusts for video distillation", () => {
+    const savings = [
+      { scenario: "dedup", bytes_before: 6000, bytes_after: 4000 },
+      { scenario: "video_distill", bytes_before: 2500, bytes_after: 500 },
+    ];
+    const totals = totalStorage(files, savings);
+    expect(totals?.original).toBe(6000);
+    expect(totals?.reduced).toBe(2000);
+    expect(totals?.savedPct).toBeCloseTo(66.7, 1);
+    expect(totals?.hasSavings).toBe(true);
+  });
+  it("falls back to original size when the dedup row is missing", () => {
+    const totals = totalStorage(files, [{ scenario: "video_distill", bytes_before: 2500, bytes_after: 500 }]);
+    expect(totals?.reduced).toBe(4000);
+  });
+  it("skips the video step when video_distill is missing", () => {
+    const totals = totalStorage(files, [{ scenario: "dedup", bytes_before: 6000, bytes_after: 4000 }]);
+    expect(totals?.reduced).toBe(4000);
+  });
+  it("reports no savings when the savings list is empty", () => {
+    const totals = totalStorage(files, []);
+    expect(totals?.reduced).toBe(6000);
+    expect(totals?.savedPct).toBe(0);
+    expect(totals?.hasSavings).toBe(false);
+  });
 });

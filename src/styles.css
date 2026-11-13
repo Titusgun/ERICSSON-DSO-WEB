@@ -136,6 +136,7 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
   :root { --workspace-header-height: 142px; }
   .workspace { padding-inline: 20px; }
   .header-inner { height: 82px; }
+  .brand-descriptor { display: none; }
   .tabs-bar { gap: 16px; justify-content: space-between; height: 60px; }
   .tabs-bar .tab-button { font-size: 14px; gap: 6px; }
   .tabs-bar .tab-button svg { width: 15px; }
@@ -185,6 +186,12 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
 
 /* Engineering workspace: neutral surfaces, compact data, explicit status. */
 .video-savings { margin-top: 32px; }
+.total-storage { margin-top: 32px; border: 1px solid var(--border); border-radius: 2px; background: var(--card); padding: 24px; }
+.total-storage-figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.total-storage-saved-amount { margin-top: 4px; font-size: 14px; color: var(--muted-foreground); }
+.total-storage-bar { margin-top: 20px; height: 6px; background: var(--muted); border-radius: 2px; overflow: hidden; }
+.total-storage-bar-fill { height: 100%; background: var(--primary); }
+.total-storage-note { margin-top: 12px; font-size: 14px; color: var(--muted-foreground); }
 .savings-table th, .savings-table td,
 .scenario-table th:not(:first-child), .scenario-table td:not(:first-child),
 .files-table th:nth-child(3), .files-table td:nth-child(3),
