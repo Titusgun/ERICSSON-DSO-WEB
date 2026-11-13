@@ -82,14 +82,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "dso — Data Storage Optimization" },
-      { name: "description", content: "Storage intelligence for your videos and documents." },
+      { name: "description", content: "Storage savings, files, recordings, and duplicate review." },
       { property: "og:title", content: "dso — Data Storage Optimization" },
-      { property: "og:description", content: "Storage intelligence for your videos and documents." },
+      { property: "og:description", content: "Storage savings, files, recordings, and duplicate review." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" },
       {
         rel: "stylesheet",
         href: appCss,
