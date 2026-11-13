@@ -1,5 +1,5 @@
 # dso roadmap
-- [ ] Add Offboarding dry-run review, consistent mock totals, and verify API fallback, populated and empty states.
+- [x] Add Offboarding dry-run review, consistent mock totals, and verify API fallback, populated and empty states.
 - [x] Make Recording frames compact and independently scrollable, keep transcript sticky, and verify buttons and arrow-key navigation.
 - [x] Correct revision ownership and duplicate review labels.
 - [x] Use only video distillation in the dashboard summary.

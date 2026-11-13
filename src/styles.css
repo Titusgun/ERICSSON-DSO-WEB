@@ -86,7 +86,7 @@
 .offboarding-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .offboarding-metrics .metric-number { font-size: 32px; }
 .dry-run-banner { display: flex; align-items: flex-start; gap: 14px; padding: 18px 0; border-block: 1px solid var(--border); line-height: 1.6; }
-.neutral-pill { background: var(--muted); color: var(--muted-foreground); }
+.pill.neutral-pill { background: var(--muted); color: var(--muted-foreground); }
 .offboarding-table td:last-child { white-space: normal; overflow-wrap: anywhere; min-width: 200px; }
 .summary-band { display: grid; grid-template-columns: 1fr 1fr; margin-top: 28px; padding: 32px 36px; background: var(--summary); color: var(--summary-foreground); position: relative; overflow: hidden; }
 .summary-band .section-label { color: var(--summary-muted); }
