@@ -27,7 +27,8 @@ import { Button } from "@/components/ui/button";
 import { RecordingView } from "@/components/recording-view";
 import { FrameLightbox } from "@/components/frame-lightbox";
 import { OffboardingView } from "@/components/offboarding-view";
-import { recordingSha, videoSavings } from "@/lib/workspace";
+import { DeleteCopiesButton } from "@/components/delete-copies-button";
+import { recordingSha, taggedFileCopies, videoSavings } from "@/lib/workspace";
 import {
   API_URL,
   getStats,
@@ -343,6 +344,9 @@ function Index() {
         {tab === "Offboarding" && <OffboardingView data={offboarding.data} />}
         {tab === "Duplicates" && (
           <div className="mt-8">
+            <div className="mb-8 flex justify-end">
+              <DeleteCopiesButton copies={taggedFileCopies(duplicates.data)} mock={mock} />
+            </div>
             {duplicates.data ? (
               [...new Set(duplicates.data.map((d) => d.kind))].map((kind) => (
                 <section key={kind} className="mb-9">
