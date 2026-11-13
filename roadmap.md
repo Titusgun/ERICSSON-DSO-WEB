@@ -1,4 +1,6 @@
 # dso roadmap
+- [x] Add a large bulk-copy delete control with an explicit unavailable-service review and verify copy targeting.
+- [ ] Connect real copy deletion when the external delete endpoint and authorization contract are supplied.
 - [x] Restyle the workspace as an Ericsson engineering tool and verify all five tabs, recording controls, and system dark theme without changing API data or existing tests.
 - [x] Add Offboarding dry-run review, consistent mock totals, and verify API fallback, populated and empty states.
 - [x] Make Recording frames compact and independently scrollable, keep transcript sticky, and verify buttons and arrow-key navigation.
