@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState, useSyncExternalStore, type FormEvent } from "react";
-import { ArrowDown, ArrowDownUp, ArrowRight, ArrowUp, Check, CheckCheck, ChevronRight, Clock3, Copy, Database, File, FileText, Film, HardDrive, ImageOff, Images, Layers3, LayoutDashboard, ListVideo, Search as SearchIcon, ShieldCheck, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { ArrowDown, ArrowDownUp, ArrowRight, ArrowUp, Check, CheckCheck, ChevronRight, Clock3, Copy, Database, File, FileText, Film, HardDrive, ImageOff, Images, Layers3, LayoutDashboard, ListVideo, Maximize2, Search as SearchIcon, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RecordingView } from "@/components/recording-view";
+import { FrameLightbox } from "@/components/frame-lightbox";
 import { OffboardingView } from "@/components/offboarding-view";
 import { recordingSha, videoSavings } from "@/lib/workspace";
 import { API_URL, getStats, getSavings, getFiles, getDuplicates, getOffboarding, search, subscribeMock, getMockStatus } from "@/lib/api";
