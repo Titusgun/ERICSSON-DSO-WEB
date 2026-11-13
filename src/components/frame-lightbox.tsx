@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { API_URL } from "@/lib/api";
 import { formatTimestamp } from "@/lib/format";
 
-export type LightboxFrame = { id: string; t_sec: number; image: string; slide_id: string | null; slide_image?: string | null };
+export type LightboxFrame = { id: string; t_sec: number; image: string; slide_id: string | null; slide_image?: string | null | undefined };
 
 export function imageUrl(image: string) {
   return image.startsWith("/recording-frames/") || /^https?:\/\//.test(image) ? image : `${API_URL}/out/${image.replace(/^\//, "")}`;
