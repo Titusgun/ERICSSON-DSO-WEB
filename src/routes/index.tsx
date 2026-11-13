@@ -4,17 +4,18 @@ import { useEffect, useState, useSyncExternalStore, type FormEvent } from "react
 import { ArrowDown, ArrowDownUp, ArrowRight, ArrowUp, Check, CheckCheck, ChevronRight, Clock3, Copy, Database, File, FileText, Film, HardDrive, ImageOff, Images, Layers3, LayoutDashboard, ListVideo, Search as SearchIcon, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RecordingView } from "@/components/recording-view";
+import { OffboardingView } from "@/components/offboarding-view";
 import { recordingSha, videoSavings } from "@/lib/workspace";
-import { API_URL, getStats, getSavings, getFiles, getDuplicates, search, subscribeMock, getMockStatus } from "@/lib/api";
+import { API_URL, getStats, getSavings, getFiles, getDuplicates, getOffboarding, search, subscribeMock, getMockStatus } from "@/lib/api";
 import { formatBytes, formatTimestamp, percentSaved } from "@/lib/format";
 import type { SearchResult, StorageFile } from "@/mocks/data";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "dso — Data Storage Optimization" },
-    { name: "description", content: "Explore storage savings, search video segments and slides, and inspect duplicate files in the dso workspace." },
+    { name: "description", content: "Explore storage savings, search recordings, inspect duplicates, and review offboarding files without deleting anything in the dso workspace." },
     { property: "og:title", content: "dso — Data Storage Optimization" },
-    { property: "og:description", content: "A clear view of your files, storage savings, and duplicates." },
+    { property: "og:description", content: "A clear view of your files, storage savings, duplicates, and dry-run offboarding review." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
@@ -25,6 +26,7 @@ const tabs = [
   { name: "Dashboard", icon: LayoutDashboard },
   { name: "Search", icon: SearchIcon },
   { name: "Duplicates", icon: Copy },
+  { name: "Offboarding", icon: ShieldCheck },
   { name: "Files", icon: FileText },
 ] as const;
 const scenarios: Record<string, { name: string; subtitle: string; icon: typeof Film }> = {
@@ -47,6 +49,7 @@ function Index() {
   const savings = useQuery({ queryKey: ["savings"], queryFn: getSavings, enabled: ready, networkMode: "always" });
   const files = useQuery({ queryKey: ["files"], queryFn: getFiles, enabled: ready, networkMode: "always" });
   const duplicates = useQuery({ queryKey: ["duplicates"], queryFn: getDuplicates, enabled: ready, networkMode: "always" });
+  const offboarding = useQuery({ queryKey: ["offboarding"], queryFn: getOffboarding, enabled: ready && tab === "Offboarding", networkMode: "always" });
   const video = videoSavings(savings.data);
   const before = video?.bytes_before ?? 0;
   const after = video?.bytes_after ?? 0;
@@ -66,7 +69,7 @@ function Index() {
       <nav className="workspace tabs-bar" aria-label="Workspace tabs" role="tablist">{tabs.map(({ name, icon: Icon }) => <Button key={name} variant="ghost" className="tab-button" role="tab" id={`tab-${name}`} aria-controls="workspace-panel" aria-selected={tab === name} data-active={tab === name} onClick={() => setTab(name)}><Icon />{name}</Button>)}</nav>
     </header>
     <main className="workspace page-body" key={tab} id="workspace-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
-      <div className="flex items-start justify-between gap-4"><div><div className="section-label mb-2 text-primary">Your workspace, distilled</div><h1 className="page-title">{tab === "Dashboard" ? "Storage overview" : tab === "Search" ? "Find the moments that matter" : tab === "Duplicates" ? "Less repetition. More clarity." : "File inventory"}</h1><p className="page-subtitle">{tab === "Dashboard" ? "A smaller footprint. The same knowledge." : tab === "Search" ? "Explore the knowledge inside your videos and documents." : tab === "Duplicates" ? "Review matching content and the copies worth keeping." : "Every source file, in one place."}</p></div><div className="hidden items-center gap-2 pt-8 text-sm text-muted-foreground md:flex"><HardDrive size={15} />Storage intelligence</div></div>
+      <div className="flex items-start justify-between gap-4"><div><div className="section-label mb-2 text-primary">Your workspace, distilled</div><h1 className="page-title">{tab === "Dashboard" ? "Storage overview" : tab === "Search" ? "Find the moments that matter" : tab === "Duplicates" ? "Less repetition. More clarity." : tab === "Offboarding" ? "Offboarding review" : "File inventory"}</h1><p className="page-subtitle">{tab === "Dashboard" ? "A smaller footprint. The same knowledge." : tab === "Search" ? "Explore the knowledge inside your videos and documents." : tab === "Duplicates" ? "Review matching content and the copies worth keeping." : tab === "Offboarding" ? "Files of a departing employee, compared with copies kept elsewhere." : "Every source file, in one place."}</p></div><div className="hidden items-center gap-2 pt-8 text-sm text-muted-foreground md:flex"><HardDrive size={15} />Storage intelligence</div></div>
       {tab === "Dashboard" && <>
         <div className="metric-grid">{metrics.map(({ label, value, icon: Icon }) => <div key={label} className="metric-card"><div className="flex items-center justify-between text-sm text-muted-foreground"><span>{label}</span><Icon size={18} strokeWidth={1.6} /></div><div className="metric-number">{value ?? "—"}</div><div className="mt-2 text-sm text-muted-foreground">{label === "Duplicates" ? "Matching items detected" : label === "Files" ? "Across scanned folders" : label === "Frames" ? "Key moments captured" : label === "Segments" ? "Searchable video moments" : "Extracted from documents"}</div></div>)}</div>
         <section className="summary-band" aria-label="Video storage savings">
@@ -77,6 +80,7 @@ function Index() {
       </>}
       {tab === "Search" && <SearchView />}
       {tab === "Files" && <FilesView files={files.data} />}
+      {tab === "Offboarding" && <OffboardingView data={offboarding.data} />}
       {tab === "Duplicates" && <div className="mt-8">{duplicates.data ? [...new Set(duplicates.data.map(d => d.kind))].map(kind => <section key={kind} className="mb-9"><div className="flex items-center gap-3"><h2 className="section-heading">{duplicateKinds[kind]?.title ?? kind}</h2><span className="pill">{duplicates.data.filter(d => d.kind === kind).length}</span></div><p className="mt-1 text-sm text-muted-foreground">{duplicateKinds[kind]?.subtitle}</p>{duplicates.data.filter(d => d.kind === kind).map((d, i) => <div className="duplicate-row" key={i}><div><div className="section-label mb-2 text-muted-foreground">{kind === "revision" ? "Older revision" : kind === "slide_text" ? "References" : "Matching copy"}</div><div className="flex items-center gap-3"><div className="type-icon"><FileText size={18} /></div><span className="break-all font-medium">{d.a}</span></div>{kind === "file_exact" && <span className="pill mt-3">Safe to delete (dry run)</span>}{d.note && <p className="mt-2 text-sm text-muted-foreground">{d.note}</p>}</div><ArrowRight className="duplicate-arrow text-muted-foreground" size={20} /><div><div className="section-label mb-2 text-primary">{kind === "slide_text" ? "Single source" : "Kept copy"}</div><div className="flex items-center gap-3"><div className="type-icon"><CheckCheck size={18} className="text-primary" /></div><span className="break-all font-medium">{d.b}</span><span className="pill ml-auto"><Check size={12} className="mr-1" />{kind === "slide_text" ? "Single source" : "Keep"}</span></div></div></div>)}</section>) : <div className="empty-state">Loading duplicate matches…</div>}{duplicates.data?.length === 0 && <div className="empty-state"><CheckCheck className="mx-auto mb-4" />No duplicates found.</div>}</div>}
       <footer className="workspace-footer"><span className="flex items-center gap-2"><ShieldCheck size={14} />Original files remain unchanged</span><span className="flex items-center gap-2">dso<span className="text-border">/</span>Less storage. More knowledge.</span></footer>
     </main>
