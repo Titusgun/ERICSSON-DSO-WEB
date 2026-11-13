@@ -136,8 +136,6 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
   :root { --workspace-header-height: 142px; }
   .workspace { padding-inline: 20px; }
   .header-inner { height: 82px; }
-  .brand-name { font-size: 30px; }
-  .brand-descriptor { display: none; }
   .tabs-bar { gap: 16px; justify-content: space-between; height: 60px; }
   .tabs-bar .tab-button { font-size: 14px; gap: 6px; }
   .tabs-bar .tab-button svg { width: 15px; }
@@ -153,7 +151,6 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
   .search-form > button { padding-inline: 15px; }
   .duplicate-row { grid-template-columns: 1fr; gap: 12px; }
   .duplicate-arrow { display: none; }
-  .workspace-footer { align-items: flex-start; font-size: 14px; }
 }
 
 .play-link { text-decoration: underline; text-underline-offset: 4px; border-radius: 2px; }
@@ -173,7 +170,6 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
   .recording-layout { grid-template-columns: minmax(0, 1fr); gap: 30px; }
   .recording-frames-column { position: static; height: min(40dvh, calc(100dvh - var(--workspace-header-height) - 32px)); }
   .recording-transcript { position: sticky; top: 16px; }
-  .workspace-footer { flex-wrap: wrap; }
 }
 
 .lightbox { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; background: var(--viewer-background); color: var(--viewer-foreground); }
@@ -211,6 +207,5 @@ mark { background: var(--highlight); color: var(--foreground); padding: 1px 3px;
   .header-inner { height: 80px; }
   .tabs-bar { justify-content: flex-start; gap: 16px; height: 56px; }
   .tabs-bar .tab-button { flex-shrink: 0; }
-  .brand-name { font-size: 28px; }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
