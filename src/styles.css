@@ -83,7 +83,8 @@
 .app-header { background: var(--card); border-bottom: 1px solid var(--border); }
 .header-inner { height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand-logo-button { display: flex; align-items: center; padding: 0; border: 0; background: transparent; }
-.brand-logo { height: 28px; width: auto; display: block; }
+.brand-logo { height: 40px; width: auto; display: block; }
+.brand-descriptor { margin-left: 20px; padding-left: 20px; border-left: 1px solid var(--border); font-size: 14px; color: var(--muted-foreground); white-space: nowrap; }
 .mock-badge { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border: 2px solid var(--signal); color: var(--signal); background: var(--signal-soft); font-size: 14px; font-weight: 700; border-radius: 2px; white-space: nowrap; }
 .status-dot { height: 6px; width: 6px; border-radius: 50%; background: currentColor; }
 .tabs-bar { display: flex; gap: 32px; height: 56px; align-items: stretch; overflow-x: auto; }
