@@ -475,6 +475,11 @@ function ResultCard({ result, onOpen }: { result: SearchResult; onOpen: () => vo
   // A transcript hit shows its key frame; a slide hit shows the slide itself.
   const preview = result.frame_image ?? result.slide_image ?? null;
   const isSlide = result.t_sec === null;
+  // slide_id = "<document sha12>:<page>:<text hash>" (DATA_CONTRACT 5): open that document at
+  // that page in the browser's PDF viewer (dso web serves it at /document/<sha12>).
+  const [slideDoc, slidePageText] = (result.slide_id ?? "").split(":");
+  const slidePage = Number(slidePageText);
+  const documentUrl = slideDoc && slidePage > 0 ? `${API_URL}/document/${slideDoc}#page=${slidePage}` : null;
   const canEnlarge = !!preview && !failed;
   const openSoon = () => {
     clearTimeout(clickTimer.current);
@@ -555,6 +560,10 @@ function ResultCard({ result, onOpen }: { result: SearchResult; onOpen: () => vo
                 {result.file}
                 <ChevronRight />
               </Button>
+            ) : documentUrl ? (
+              <a className="hover:underline" href={documentUrl} target="_blank" rel="noreferrer">
+                {result.file}
+              </a>
             ) : (
               result.file
             )}
@@ -567,6 +576,18 @@ function ResultCard({ result, onOpen }: { result: SearchResult; onOpen: () => vo
             >
               <Clock3 size={14} />
               Play at {formatTimestamp(result.t_sec)}
+            </a>
+          )}
+          {documentUrl && (
+            <a
+              className={`play-link flex items-center gap-1.5 font-mono text-sm text-primary${isSlide ? " ml-auto" : ""}`}
+              href={documentUrl}
+              target="_blank"
+              rel="noreferrer"
+              title="Open the document at this page"
+            >
+              <FileText size={14} />
+              {isSlide ? `Open page ${slidePage}` : `Open slide ${slidePage}`}
             </a>
           )}
         </div>
