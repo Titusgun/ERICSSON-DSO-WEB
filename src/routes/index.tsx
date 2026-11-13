@@ -477,7 +477,10 @@ function ResultCard({ result, onOpen }: { result: SearchResult; onOpen: () => vo
   const [enlarged, setEnlarged] = useState(false);
   const clickTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(clickTimer.current), []);
-  const canEnlarge = !!result.frame_image && !failed;
+  // A transcript hit shows its key frame; a slide hit shows the slide itself.
+  const preview = result.frame_image ?? result.slide_image ?? null;
+  const isSlide = result.t_sec === null;
+  const canEnlarge = !!preview && !failed;
   const openSoon = () => {
     clearTimeout(clickTimer.current);
     clickTimer.current = setTimeout(onOpen, canEnlarge ? 250 : 0);
@@ -485,15 +488,16 @@ function ResultCard({ result, onOpen }: { result: SearchResult; onOpen: () => vo
   return (
     <article className="result-card">
       <div className="relative">
-        {enlarged && result.frame_image && (
+        {enlarged && preview && (
           <FrameLightbox
             frames={[
               {
                 id: "result",
                 t_sec: result.t_sec ?? 0,
-                image: result.frame_image,
+                image: preview,
                 slide_id: result.slide_id,
-                slide_image: result.slide_image,
+                // next to a key frame: its matched slide; for a slide hit the picture IS the slide
+                slide_image: result.frame_image ? result.slide_image : null,
               },
             ]}
             index={0}
@@ -512,21 +516,25 @@ function ResultCard({ result, onOpen }: { result: SearchResult; onOpen: () => vo
                   }
                 : undefined
             }
-            role={result.t_sec !== null ? "button" : undefined}
-            tabIndex={result.t_sec !== null ? 0 : undefined}
-            aria-label={result.t_sec !== null ? `Open recording ${result.file}` : undefined}
-            onClick={result.t_sec !== null ? openSoon : undefined}
+            role={!isSlide || canEnlarge ? "button" : undefined}
+            tabIndex={!isSlide || canEnlarge ? 0 : undefined}
+            aria-label={isSlide ? `Enlarge slide from ${result.file}` : `Open recording ${result.file}`}
+            onClick={!isSlide ? openSoon : canEnlarge ? () => setEnlarged(true) : undefined}
             onKeyDown={(e) => {
-              if (result.t_sec !== null && (e.key === "Enter" || e.key === " ")) {
+              if (e.key !== "Enter" && e.key !== " ") return;
+              if (!isSlide) {
                 e.preventDefault();
                 onOpen();
+              } else if (canEnlarge) {
+                e.preventDefault();
+                setEnlarged(true);
               }
             }}
           >
-            {result.frame_image && !failed ? (
+            {preview && !failed ? (
               <img
-                src={`${API_URL}/out/${result.frame_image}`}
-                alt={`Frame from ${result.file}`}
+                src={`${API_URL}/out/${preview}`}
+                alt={isSlide ? `Slide from ${result.file}` : `Frame from ${result.file}`}
                 onError={() => setFailed(true)}
               />
             ) : (
