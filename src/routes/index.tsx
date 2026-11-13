@@ -167,7 +167,7 @@ function Index() {
         role="tabpanel"
         aria-labelledby={`tab-${tab}`}
       >
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="page-title">
               {tab === "Dashboard"
@@ -192,6 +192,7 @@ function Index() {
                       : ""}
             </p>
           </div>
+          {tab === "Dashboard" && <DeleteCopiesButton copies={taggedFileCopies(duplicates.data)} mock={mock} label="Do the magic" />}
         </div>
         {tab === "Dashboard" && (
           <>

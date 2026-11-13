@@ -3,12 +3,12 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export function DeleteCopiesButton({ copies, mock }: { copies: string[]; mock: boolean }) {
+export function DeleteCopiesButton({ copies, mock, label = "Delete all copies" }: { copies: string[]; mock: boolean; label?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <Button variant="outline" size="lg" className="min-h-14 w-full border-destructive px-8 text-base text-destructive sm:w-auto" disabled={!copies.length} onClick={() => setOpen(true)}>
-        <Trash2 /> Delete all copies ({copies.length})
+        <Trash2 /> {label} ({copies.length})
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-[calc(100%-32px)] shadow-none sm:max-w-lg">

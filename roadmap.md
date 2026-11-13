@@ -1,4 +1,6 @@
 # dso roadmap
+- [x] Add Dashboard “Do the magic” and Offboarding library/delete review buttons without mutating files.
+- [ ] Connect adding Offboarding files to the library when a library service contract is supplied.
 - [x] Add a large bulk-copy delete control with an explicit unavailable-service review and verify copy targeting.
 - [ ] Connect real copy deletion when the external delete endpoint and authorization contract are supplied.
 - [x] Restyle the workspace as an Ericsson engineering tool and verify all five tabs, recording controls, and system dark theme without changing API data or existing tests.
