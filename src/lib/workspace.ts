@@ -1,8 +1,4 @@
-import type { Duplicate, Recording, Savings, SearchResult } from "@/mocks/data";
-
-export const taggedFileCopies = (duplicates: Duplicate[] = []) =>
-  [...new Set(duplicates.filter(d => d.kind === "file_exact" || d.kind === "file_content").map(d => d.a))]
-    .filter(name => !duplicates.some(d => d.b === name));
+import type { Recording, Savings, SearchResult } from "@/mocks/data";
 
 export const videoSavings = (savings: Savings[] | undefined) => savings?.find(s => s.scenario === "video_distill");
 export const recordingSha = (result: SearchResult) => result.sha12 ?? result.frame_image?.match(/frames\/([^/]+)/)?.[1];
