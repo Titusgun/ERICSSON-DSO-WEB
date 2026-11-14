@@ -78,3 +78,8 @@ The `dso` API only listens on this computer (127.0.0.1) and only answers pages f
 npm run test       # unit tests (vitest)
 npm run lint       # eslint
 ```
+
+`npm run build` produces a server-rendered app (not a static folder), so for local use run it
+with `npm run dev` as above.
+
+Web page built with the help of GenAI. Main dso repo is the programm that does everything this is just a way to visualize the data. 
